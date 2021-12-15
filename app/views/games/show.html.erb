@@ -1,14 +1,26 @@
+<%= stylesheet_link_tag "games" %>
+<%= javascript_include_tag %>
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Width:</strong>
-  <%= @game.width %>
-</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+      <h1>Players</h1>
+    </div>
+    <div class ="col-md-10">
+      <table class="game">
+        <% (1..@game.height).each do |h| %>
+        <tr>
+          <% (1..@game.width).each do |w| %>
+          <td class="border-cell"></td>
+          <% end %>
+        </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <%= link_to 'Back', games_path %>
+  </div>
+</div>
 
-<p>
-  <strong>Height:</strong>
-  <%= @game.height %>
-</p>
-
-<%= link_to 'Edit', edit_game_path(@game) %> |
-<%= link_to 'Back', games_path %>

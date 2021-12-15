@@ -1,3 +1,19 @@
-// Place all the styles related to the games controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+$player1: #FEFF35;
+$player2: #F14750;
+
+table.game 
+{
+    border-collapse: collapse;
+    table-layout: fixed;
+    aspect-ratio: 1;
+    height: 80vh;
+}
+
+.cell{
+    text-align: center;
+}
+
+.border-cell{
+    @extend .cell;
+    border: 3px solid #0069A8; 
+}
