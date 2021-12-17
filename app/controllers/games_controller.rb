@@ -8,6 +8,8 @@ class GamesController < ApplicationController
 
   # GET /games/1 or /games/1.json
   def show
+    @bots = @game.bots
+    @addable_bots = Bot.all - @game.bots
   end
 
   # GET /games/new
