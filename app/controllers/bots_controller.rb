@@ -64,6 +64,6 @@ class BotsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def bot_params
-      params.fetch(:bot, {})
+      params.require(:bot).permit(:name, :static)
     end
 end

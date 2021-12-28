@@ -11,7 +11,21 @@
     </div>
   <% end %>
 
-  <div class="actions">
-    <%= form.submit %>
+  <div class="container overflow-hidden">
+    <div class="row gy-2">
+      <div class="field col-md-6">
+        <%= form.label :name %>
+        <%= form.text_field :name %>
+      </div>
+
+      <div class="field col-md-6">
+        <%= form.label :static %>
+        <%= form.check_box :static %>
+      </div>
+
+      <div class="col-md-2">
+        <%= form.submit %>
+      </div>
+    </div>
   </div>
 <% end %>

@@ -11,14 +11,23 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :width %>
-    <%= form.text_field :width %>
-  </div>
+  <div class="container">
+    <div class="row">
+      <div class="field col-md-2">
+        <%= form.label :width %>
+        <%= form.text_field :width %>
+      </div>
 
-  <div class="field">
-    <%= form.label :height %>
-    <%= form.text_field :height %>
+      <div class="field col-md-2">
+        <%= form.label :height %>
+        <%= form.text_field :height %>
+      </div>
+
+      <div class="col-md-6">
+        <h1>Players</h1>
+        TODO: Multiselect
+      </div>
+    </div>
   </div>
 
   <div class="actions">
