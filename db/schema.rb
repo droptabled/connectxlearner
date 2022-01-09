@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_06_003725) do
+ActiveRecord::Schema.define(version: 2022_01_07_052204) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,7 +42,24 @@ ActiveRecord::Schema.define(version: 2022_01_06_003725) do
     t.bigint "game_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "transfer_node_id"
     t.index ["game_id"], name: "index_input_nodes_on_game_id"
+    t.index ["transfer_node_id"], name: "index_input_nodes_on_transfer_node_id"
   end
 
+  create_table "transfer_edges", force: :cascade do |t|
+    t.bigint "upstream_node_id"
+    t.bigint "downstream_node_id"
+    t.float "weight"
+    t.index ["downstream_node_id"], name: "index_transfer_edges_on_downstream_node_id"
+    t.index ["upstream_node_id"], name: "index_transfer_edges_on_upstream_node_id"
+  end
+
+  create_table "transfer_nodes", force: :cascade do |t|
+    t.integer "layer", null: false
+    t.index ["layer"], name: "index_transfer_nodes_on_layer"
+  end
+
+  add_foreign_key "transfer_edges", "transfer_nodes", column: "downstream_node_id"
+  add_foreign_key "transfer_edges", "transfer_nodes", column: "upstream_node_id"
 end
