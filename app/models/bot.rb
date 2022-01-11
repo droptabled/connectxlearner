@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 class Bot < ApplicationRecord
-  has_and_belongs_to_many :games
+  belongs_to :game
+  has_many :transfer_nodes
 end
