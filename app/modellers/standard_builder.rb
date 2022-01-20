@@ -29,6 +29,6 @@ class StandardBuilder
         new_edges << { weight: 0, upstream_node: node, downstream_node: new_node}
       end
     end
-    TramsferEdge.insert_all(new_edges)
+    TransferEdge.insert_all(new_edges)
   end
 end
