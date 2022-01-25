@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 2022_01_07_052204) do
   create_table "transfer_edges", force: :cascade do |t|
     t.bigint "upstream_node_id"
     t.bigint "downstream_node_id"
-    t.float "weight"
+    t.float "weight", default: 0.0
     t.index ["downstream_node_id"], name: "index_transfer_edges_on_downstream_node_id"
     t.index ["upstream_node_id"], name: "index_transfer_edges_on_upstream_node_id"
   end

@@ -1,34 +1,34 @@
 # frozen_string_literal: true
 
 class StandardBuilder
-  def generateInputNodes(game:, bot:)
-    new_nodes = []
-    game.width.times do |x|
-      game.height.times do |y|
-        new_nodes << { layer: 0, bot: bot }
-      end
-    end
-    
-    TransferNode.insert_all(new_nodes)
+  def initialize(bot)
+    @bot = bot
   end
 
-  def generateAndMapLayerNodes(bot:, parent_layer:, count:)
-    parent_nodes = TransferNode.where(bot: bot, layer: parent_layer)
-    new_layer = parent_layer + 1
-    new_nodes = []
-    parent_nodes.map do |node|
-      count.times do |count|
-        new_nodes << { bot: bot, layer: new_layer }
-      end
-    end
-    TransferNode.insert_all(new_nodes)
-
-    new_edges = []
-    parent_nodes.map do |node|
-      new_nodes.map do |new_node|
-        new_edges << { weight: 0, upstream_node: node, downstream_node: new_node}
-      end
-    end
-    TransferEdge.insert_all(new_edges)
+  def generateInputNodes
+    generateNodes(layer: 0, count: bot.game.width * bot.game.height)
   end
+
+  def generateAndMapLayerNodes(parent_layer:, count:)
+    generateNodes(layer: parent_layer + 1, count: count)
+    generateConnections(source_layer: parent_layer, target_layer: parent_layer + 1)
+  end
+
+  private
+    attr_reader :bot
+
+    def generateNodes(layer:, count:)
+      new_nodes = Array.new(count) {{ layer: layer, bot_id: bot.id }}
+      TransferNode.insert_all(new_nodes)
+    end
+  
+    def generateConnections(source_layer:, target_layer:)
+      new_edges = []
+      source_node_ids = TransferNode.where(bot: bot, layer: source_layer).pluck(:id)
+      target_node_ids = TransferNode.where(bot: bot, layer: target_layer).pluck(:id)
+
+      source_node_ids.each do |source_id|
+        new_edges << target_node_ids.map { |target_id| { upstream_node_id: source_id, downstream_node_id: target_id }}
+      end
+    end
 end
