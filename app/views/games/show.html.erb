@@ -4,7 +4,8 @@
 
 <div class="container">
   <div class="row">
-    <div class ="col-md-12">
+
+    <div class ="col-md-6">
       <table class="game">
         <% (1..@game.height).each do |h| %>
         <tr>
@@ -15,11 +16,22 @@
         <% end %>
       </table>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <h2>Learn</h2>
+
+    <div class="col-md-4">
+      <h4>Learn</h4>
     </div>
+
+    <div class="col-md-2">
+      <div class="container">
+        <div class="row">
+          <h4>Bots</h4>
+        </div>
+        <div class="row">
+          <%= link_to("New Bot", new_game_bot_path(@game))%>
+        </div>
+      </div>
+    </div>
+
   </div>
   <div class="row">
     <%= link_to 'Back', games_path %>

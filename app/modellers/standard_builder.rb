@@ -30,5 +30,7 @@ class StandardBuilder
       source_node_ids.each do |source_id|
         new_edges << target_node_ids.map { |target_id| { upstream_node_id: source_id, downstream_node_id: target_id }}
       end
+
+      TransferEdge.insert_all(new_edges.flatten)
     end
 end
