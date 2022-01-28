@@ -16,7 +16,7 @@
       <tr>
         <td><%= bot.name %></td>
         <td><%= bot.static?.to_s %></td>
-        <td><%= link_to 'Show', bot %>&nbsp;&nbsp;|&nbsp;&nbsp;<%= link_to 'Edit', edit_bot_path(bot) %></td>
+        <td><%= link_to 'Show', bot %>&nbsp;&nbsp;|&nbsp;&nbsp;<%= link_to 'Edit', edit_game_bot_path(@game, bot) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -24,4 +24,4 @@
 
 <br>
 
-<%= link_to 'New Bot', new_bot_path %>
+<%= link_to 'New Bot', new_game_bot_path(@game) %>

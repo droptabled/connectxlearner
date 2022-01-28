@@ -1,6 +1,5 @@
 <h1>Editing Bot</h1>
 
-<%= render 'form', bot: @bot %>
+<%= render('form', bot: @bot, game: @game) %>
 
-<%= link_to 'Show', @bot %> |
-<%= link_to 'Back', bots_path %>
+<%= link_to('Back', game_bots_path(@game) %>

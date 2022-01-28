@@ -1,5 +1,6 @@
 class BotsController < ApplicationController
   before_action :set_bot, only: %i[ show edit update destroy ]
+  before_action :get_game
 
   # GET /bots or /bots.json
   def index
@@ -22,15 +23,14 @@ class BotsController < ApplicationController
   # POST /bots or /bots.json
   def create
     @bot = Bot.new(bot_params)
+    @bot.game_id = params[:game_id]
+    result = @bot.save
 
-    respond_to do |format|
-      if @bot.save
-        format.html { redirect_to @bot, notice: "Bot was successfully created." }
-        format.json { render :show, status: :created, location: @bot }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @bot.errors, status: :unprocessable_entity }
-      end
+    if @bot.save
+      redirect_to game_bot_path(@game, @bot), notice: "Bot was successfully created."
+    else
+      flash[:error] = @bot.errors.map(&:full_message).join("\n")
+      render :new
     end
   end
 
@@ -65,5 +65,9 @@ class BotsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def bot_params
       params.require(:bot).permit(:name, :static)
+    end
+
+    def get_game
+      @game = Game.find(params[:game_id])
     end
 end

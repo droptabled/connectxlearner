@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "foreman",
+			"type": "shell",
+			"command": "foreman",
+			"args": [
+				"start"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}
