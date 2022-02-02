@@ -27,7 +27,7 @@ class BotsController < ApplicationController
     result = @bot.save
 
     if @bot.save
-      redirect_to game_bot_path(@game, @bot), notice: "Bot was successfully created."
+      redirect_to game_path(@game), notice: "Bot was successfully created."
     else
       flash[:error] = @bot.errors.map(&:full_message).join("\n")
       render :new

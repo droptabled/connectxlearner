@@ -18,14 +18,25 @@
     </div>
 
     <div class="col-md-4">
-      <h4>Learn</h4>
+      <div class="row">
+        <h4>Learn</h4>
+      </div>
+      <div class="row">
+        <h4>Play</h4>
+      </div>
     </div>
 
     <div class="col-md-2">
       <div class="container">
         <div class="row">
-          <h4>Bots</h4>
+          <h4>Bot Players</h4>
         </div>
+        
+          <% @bots.each do |bot| %>
+            <div class="row">
+              <p><%= bot.name %></p>
+            </div>
+          <% end %>
         <div class="row">
           <%= link_to("New Bot", new_game_bot_path(@game))%>
         </div>

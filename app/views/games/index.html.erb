@@ -22,15 +22,13 @@
             <td><%= game.width %></td>
             <td><%= game.height %></td>
             <td><%= link_to 'Show', game %></td>
-            <td> - </td>
-            <td><%= link_to 'Destroy', game, method: :delete, data: { confirm: 'Are you sure?' } %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
   <div class="row">
-    <%= link_to 'New Game', new_game_path %>
+    <%= link_to('New Game', new_game_path) %>
   </div>
 </div>
 

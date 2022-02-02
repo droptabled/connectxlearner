@@ -1,27 +1,31 @@
 <%= stylesheet_link_tag "bots" %>
 
-<p id="notice"><%= notice %></p>
+<div class="container">
+  <p id="notice"><%= notice %></p>
 
-<h1>Bots</h1>
+  <h1><%= @game.width %> x <%= @game.height %> Size Bots</h1>
 
-<table class="spaced-table">
-  <thead>
-    <td>Name</td>
-    <td>Static</td>
-    <td>Actions</td>
-  </thead>
+  <table class="spaced-table">
+    <thead>
+      <td>Name</td>
+      <td>Static</td>
+      <td>Actions</td>
+    </thead>
 
-  <tbody>
-    <% @bots.each do |bot| %>
-      <tr>
-        <td><%= bot.name %></td>
-        <td><%= bot.static?.to_s %></td>
-        <td><%= link_to 'Show', bot %>&nbsp;&nbsp;|&nbsp;&nbsp;<%= link_to 'Edit', edit_game_bot_path(@game, bot) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    <tbody>
+      <% @bots.each do |bot| %>
+        <tr>
+          <td><%= bot.name %></td>
+          <td><%= bot.static?.to_s %></td>
+          <td><%= link_to('Edit', edit_game_bot_path(@game, bot)) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<br>
-
-<%= link_to 'New Bot', new_game_bot_path(@game) %>
+  <br>
+  <div class="row">
+    <div class='col-md-1'><%= link_to('Back', game_path(@game)) %></div>
+    <div class='col-md-1'><%= link_to('New Bot', new_game_bot_path(@game)) %></div>
+  </div>
+</div>
