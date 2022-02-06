@@ -1,5 +1,4 @@
 <%= stylesheet_link_tag "games" %>
-<%= javascript_include_tag %>
 <p id="notice"><%= notice %></p>
 
 <div class="container">
@@ -18,11 +17,15 @@
     </div>
 
     <div class="col-md-4">
-      <div class="row">
-        <h4>Learn</h4>
-      </div>
-      <div class="row">
-        <h4>Play</h4>
+      <p>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#playCollapse" aria-expanded="false" aria-controls="playCollapse">
+          Play
+        </button>
+      </p>
+      <div class="collapse" id="playCollapse">
+        <div>
+          Play controller here?
+        </div>
       </div>
     </div>
 
