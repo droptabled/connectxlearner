@@ -38,6 +38,7 @@
           <% @bots.each do |bot| %>
             <div class="row">
               <p><%= bot.name %></p>
+              <p><%= link_to("Show", edit_game_bot_path(@game, bot)) %>
             </div>
           <% end %>
         <div class="row">

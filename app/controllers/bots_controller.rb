@@ -18,15 +18,16 @@ class BotsController < ApplicationController
 
   # GET /bots/1/edit
   def edit
+    @nodes = @bot.transfer_nodes.includes(:upstream_edges, :downstream_edges)
   end
 
   # POST /bots or /bots.json
   def create
     @bot = Bot.new(bot_params)
     @bot.game_id = params[:game_id]
-    result = @bot.save
 
     if @bot.save
+      StandardBuilder.new(@bot).generateInputNodes
       redirect_to game_path(@game), notice: "Bot was successfully created."
     else
       flash[:error] = @bot.errors.map(&:full_message).join("\n")

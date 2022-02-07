@@ -1,5 +1,7 @@
-<h1>Editing Bot</h1>
+<h1><%= @bot.name %> Bot</h1>
 
-<%= render('form', bot: @bot, game: @game) %>
+<% @nodes.each do |node| %>
+  <%= node.id %>
+<% end %>
 
-<%= link_to('Back', game_bots_path(@game) %>
+<%= link_to('Back', game_path(@game)) %>
