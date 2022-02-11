@@ -27,7 +27,11 @@ class BotsController < ApplicationController
     @bot.game_id = params[:game_id]
 
     if @bot.save
-      StandardBuilder.new(@bot).generateInputNodes
+      builder = StandardBuilder.new(@bot)
+      builder.generateInputNodes
+      builder.generateAndMapLayerNodes(100)
+      builder.generateAndMapLayerNodes(100)
+      builder.generateAndMapOutputNodes
       redirect_to game_path(@game), notice: "Bot was successfully created."
     else
       flash[:error] = @bot.errors.map(&:full_message).join("\n")

@@ -9,9 +9,14 @@ class StandardBuilder
     generateNodes(layer: 0, count: bot.game.width * bot.game.height)
   end
 
-  def generateAndMapLayerNodes(parent_layer:, count:)
-    generateNodes(layer: parent_layer + 1, count: count)
-    generateConnections(source_layer: parent_layer, target_layer: parent_layer + 1)
+  def generateAndMapLayerNodes(count:)
+    last_layer = bot.transfer_nodes.maximum("layer")
+    generateNodes(layer: last_layer + 1, count: count)
+    generateConnections(source_layer: last_layer, target_layer: last_layer + 1)
+  end
+
+  def generateAndMapOutputNodes
+    generateAndMapLayerNodes(bot.game.width * bot.game.height)
   end
 
   private
