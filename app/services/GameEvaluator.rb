@@ -9,15 +9,29 @@ class GameEvaluator
   end
   
   def playPiece(playerId:, column:)
-    raise StandardError.new("Column #{column} is full") if col_tracker[column] >= (g.row_count - 1)
+    raise StandardError.new("Column #{column} is full") if col_tracker[column] >= (game_array.row_count - 1)
+
     game_array[col_tracker[column], column] = playerId
     col_tracker[column] += 1
-    checkVictory
+    checkVictory(row: col_tracker[column], column: column)
   end
 
   private
     attr_accessor :game_array, :col_tracker
 
-    def checkVictory
+    def checkVictory(row:, column:)
+      raise StandardError.new("No player token") if game_array[height, width] == 0
+
+      # Vertical
+
+      # Horizontal
+
+      # Diagonal NE - SW
+
+      # Diagonal SE - NW
     end
+
+    # Horizontal -1 (West), 1 (East)
+    # Vertical -1 (South), 1 (North)
+    def checkDirection(horizontal:, vertical:)
 end
