@@ -3,6 +3,12 @@
 require 'matrix'
 
 class GameEvaluator
+  TIE = -1
+  CONTINUE = 0
+  WON = 1
+
+  attr_reader :game_array
+
   def initialize(height:, width:)
     game_array = Matrix.zero(height, width)
     col_tracker = Array.new(width, 0)
@@ -13,11 +19,23 @@ class GameEvaluator
 
     game_array[col_tracker[column], column] = playerId
     col_tracker[column] += 1
-    checkVictory(row: col_tracker[column], column: column)
+    
+    # If the gamearray is full and no one's won its a tie
+    if col_tracker.uniq == [game_array.row_count - 1]
+      { gameState: TIE }
+    else
+      result = checkVictory(row: col_tracker[column], column: column)
+      if result
+        { gameState: WON, playerId: result }
+      else
+        { gameState: CONTINUE }
+      end
+    end
   end
 
   private
-    attr_accessor :game_array, :col_tracker
+    attr_accessor :col_tracker
+    attr_writer :game_array
 
     def checkVictory(row:, column:)
       raise StandardError.new("No player token") if game_array[height, width] == 0
