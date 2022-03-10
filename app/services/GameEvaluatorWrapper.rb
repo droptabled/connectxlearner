@@ -4,23 +4,21 @@ require 'matrix'
 
 # Wraps GameEvaluator to provide a consistent player1 = 1 player2 = -1 ID set for learning
 class GameEvaluatorWrapper < GameEvaluator
-
-  def initialize(player1:, player2:, height:, width:)
-    @player1 = player1
-    @player2 = @player2
+  def initialize(players:, height:, width:)
+    @players = players
     super(height: height, width: width)
   end
-  
+
   def playPiece(player:, column:)
-    if player == player1
+    if player == players[0]
       super(playerId: 1, column: column)
-    elsif player == player2
+    elsif player == players[1]
       super(playerId: -1, column: column)
     else
-      raise ArgumentError.new("Bot must be either #{player1.id} or #{player2.id} id")
+      raise ArgumentError.new("Bot must be either #{players[0].id} or #{players[1].id} id")
     end
   end
 
   private
-    attr_reader :player1, :player2
+    attr_reader :players
 end
