@@ -29,8 +29,9 @@ class BotsController < ApplicationController
     if @bot.save
       builder = StandardBuilder.new(@bot)
       builder.generateInputNodes
-      builder.generateAndMapLayerNodes(100)
-      builder.generateAndMapLayerNodes(100)
+      5.times do |x|
+        builder.generateAndMapLayerNodes(50)
+      end
       builder.generateAndMapOutputNodes
       redirect_to game_path(@game), notice: "Bot was successfully created."
     else

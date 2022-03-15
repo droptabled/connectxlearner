@@ -3,6 +3,10 @@
 class NeuralNet
   def initialize(bot)
     @bot = bot.preload(transfer_nodes: :transfer_edges)
+    bot.transfer_nodes.where(layer: 1..).each do |node|
+      # add generation of multiplication vectors here
+      node.upstream_edges
+    end
   end
 
   def getValue(game_array)
