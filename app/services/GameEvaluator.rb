@@ -7,17 +7,22 @@ class GameEvaluator
   CONTINUE = 0
   WON = 1
 
-  attr_reader :game_array
-
-  def initialize(height:, width:)
+  def initialize(height:, width:, player_ids:)
     game_array = Matrix.zero(height, width)
     col_tracker = Array.new(width, 0)
+    @player_ids = player_ids
   end
   
-  def playPiece(playerId:, column:)
-    raise StandardError.new("Column #{column} is full") if col_tracker[column] >= (game_array.row_count - 1)
+  def playPiece(player_id:, column:)
+    validatePlayer(player_id)
+    raise StandardError.new("Column #{column} is full") if (col_tracker[column] + 1) > (game_array.row_count - 1)
 
-    game_array[col_tracker[column], column] = playerId
+    # TODO: Allow multiple players to play
+    if player == players[0]
+      game_array[col_tracker[column], column] = 1
+    else
+      game_array[col_tracker[column], column] = -1
+    end
     col_tracker[column] += 1
     
     # If the gamearray is full and no one's won its a tie
@@ -33,9 +38,22 @@ class GameEvaluator
     end
   end
 
+  # Get the game state from the perspective of player
+  # 1 = your pieces
+  # -1 = enemy pieces
+  def getGameState(player_id)
+    validatePlayer(player_id)
+    # TODO: more comprehensive converter capable of handling multiple players
+    if player == players[0]
+      game_array
+    else
+      game_array * -1
+    end
+  end
+
   private
-    attr_accessor :col_tracker
-    attr_writer :game_array
+    attr_reader :player_ids
+    attr_accessor :col_tracker, :game_array
 
     def checkVictory(row:, column:)
       raise StandardError.new("No player token") if game_array[height, width] == 0
@@ -74,5 +92,9 @@ class GameEvaluator
       end
 
       playerDirection
+    end
+
+    def validatePlayer(player_id)
+      raise ArgumentError.new("Bot ID must be in #{player_ids}") unless player_id.in?(player_ids)
     end
 end

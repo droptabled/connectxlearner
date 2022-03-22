@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AdversaryGameEvolution
+class GamePlayer
   def initialize(bot1:, bot2:)
     @players = [
       bot1,
@@ -28,6 +28,7 @@ class AdversaryGameEvolution
   end
 
   def save
+    # TODO: save modified weight matrix back into database
     bot
   end
 

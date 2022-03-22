@@ -7,7 +7,7 @@ class NeuralNet
       # skip the first layer since its the input values
       layer = upstream_layer + 1
       bot.transfer_nodes.where(layer: layer).preload(:upstream_edges).each do |node|
-        @bot_array[layer].push({ node: node, input_vector: node.upstream_edges.pluck(:weight) })
+        @bot_array[layer].push({ node: node, weight_vector: node.upstream_edges.pluck(:weight) })
       end
     end
   end
@@ -15,10 +15,13 @@ class NeuralNet
   def getValue(game_array)
     input_vector = game_array.flatten
     max_layer.times do |depth|
-      bot.transfer_nodes.where(layer: depth + 1).each do |node|
-        input_vector * transform_layer[depth]
+      input_vector = bot_array[layer].map do |node|
+        input_vector * node[:weight_vector]
       end
     end
+
+    # return the index of the max value
+    input_vector.each_with_index.max[1]
   end
 
   private
