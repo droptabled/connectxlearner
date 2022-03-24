@@ -27,7 +27,7 @@ class GameEvaluator
       turn_index = (turn_index + 1) % 2
     end
   end
-  
+
   def playPiece(player_id:, column:)
     validatePlayer(player_id)
     raise StandardError.new("Column #{column} is full") if (col_tracker[column] + 1) > (game_array.row_count - 1)
