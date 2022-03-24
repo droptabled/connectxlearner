@@ -7,10 +7,25 @@ class GameEvaluator
   CONTINUE = 0
   WON = 1
 
-  def initialize(height:, width:, player_ids:)
-    game_array = Matrix.zero(height, width)
-    col_tracker = Array.new(width, 0)
-    @player_ids = player_ids
+  def initialize(players:)
+    @players = players
+    @game = players.first.game
+    @nets = players.map { |player| NeuralNet.new(player) }
+    @player_ids = players.map(&:id)
+    @game_array = Matrix.zero(game.height, game.width)
+    @col_tracker = Array.new(@game.width, 0)
+  end
+
+  def play
+    # Flip a coin to see who goes first
+    turn_index = rand.round
+
+    (game.height * game.width).times do |turn|
+      net_value = nets[turn_index].getValue(game_array)
+      result = playPiece(player: player_ids[turn_index], column: net_value)
+      return result unless result[:gameState] == CONTINUE
+      turn_index = (turn_index + 1) % 2
+    end
   end
   
   def playPiece(player_id:, column:)
@@ -52,7 +67,7 @@ class GameEvaluator
   end
 
   private
-    attr_reader :player_ids
+    attr_reader :players, :player_ids, :game, :nets
     attr_accessor :col_tracker, :game_array
 
     def checkVictory(row:, column:)
