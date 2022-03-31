@@ -2,6 +2,9 @@
 
 require 'matrix'
 
+# Handles the game logic and victory determination
+# Params:
+# players: Iterable of bots
 class GameEvaluator
   TIE = -1
   CONTINUE = 0
