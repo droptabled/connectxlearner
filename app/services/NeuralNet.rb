@@ -4,8 +4,8 @@
 class NeuralNet
   def initialize(bot:, mutation_weight: nil)
     case bot
-    when Array
-      @bot_array = bot
+    when NeuralNet
+      @bot_array = bot.bot_array
       mutate(mutation_weight) if mutation_weight
     when Bot
       @bot_array = Array.new(bot.max_layer)
@@ -32,6 +32,7 @@ class NeuralNet
   end
 
   def mutate(max_weight)
+    max_weight = max_weight.to_f
     @bot_array.each do |layer|
       layer.each do |hash|
         hash[:weight_vector] = hash[:weight_vector].map { |x| x + rand(-max_weight..max_weight) }
@@ -39,6 +40,5 @@ class NeuralNet
     end
   end
 
-  private
-    attr_reader :bot_array
+  attr_reader :bot_array
 end

@@ -13,12 +13,34 @@ class NetEvolver
   # WON = 1
   def initialize(bot:, iterations:, gamesPerIteration:)
     @bot = bot
+    @base_net = NeuralNet.new(bot: bot)
+    @iterations = iterations
+    @gamesPerIteration = gamesPerIteration
   end
 
-  # Create 4 slightly randomized versions of the original bot
-  # Play N games against each other (and the original) round robin
+  # Create N slightly randomized versions of the original bot
+  # Play M games against each other (and the original) round robin
   # promote the best performer to the next version
 
+  def call
+    iterations.times do
+      @base_net = getMutation(4)
+    end
+
+    updateNet
+  end
+
+  def getMutation(mutations_count)
+    net_array = [base_net]
+    net_array += mutations_count.times.map { NeuralNet.new(bot: base_net, mutation_weight: 10) }
+
+  end
+
+  def updateNet
+    binding.pry
+    # TODO: update the weights in the database with hte values in base_net
+  end
+
   private
-    attr_reader :bot, :result
+    attr_reader :base_net, :result
 end

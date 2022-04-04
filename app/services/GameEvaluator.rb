@@ -8,14 +8,13 @@ require 'matrix'
 class GameEvaluator
   TIE = -1
   CONTINUE = 0
-  WON = 1
 
   def initialize(players:)
     @players = players
     @game = players.first.game
     @nets = players.map { |player| NeuralNet.new(player) }
     @player_ids = players.map(&:id)
-    @game_array = Matrix.zero(game.height, game.width)
+    @game_array = Matrix.zero(@game.height, @game.width)
     @col_tracker = Array.new(@game.width, 0)
   end
 
@@ -26,7 +25,11 @@ class GameEvaluator
     (game.height * game.width).times do |turn|
       net_value = nets[turn_index].getValue(game_array)
       result = playPiece(player: player_ids[turn_index], column: net_value)
-      return result unless result[:gameState] == CONTINUE
+      unless result == CONTINUE
+        game_array = Matrix.zero(game.height, game.width)
+        col_tracker = Array.new(@game.width, 0)
+        return result
+      end
       turn_index = (turn_index + 1) % 2
     end
   end
@@ -45,13 +48,13 @@ class GameEvaluator
     
     # If the gamearray is full and no one's won its a tie
     if col_tracker.uniq == [game_array.row_count - 1]
-      { gameState: TIE }
+      TIE
     else
       result = checkVictory(row: col_tracker[column], column: column)
       if result
-        { gameState: WON, playerId: result }
+        result
       else
-        { gameState: CONTINUE }
+        CONTINUE
       end
     end
   end
