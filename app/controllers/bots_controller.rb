@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class BotsController < ApplicationController
-  before_action :set_bot, only: %i[ show edit update destroy ]
-  before_action :get_game
+  before_action :set_bot, only: [:show, :edit, :update, :destroy]
+  before_action :set_game
 
   # GET /bots or /bots.json
   def index
@@ -28,11 +30,11 @@ class BotsController < ApplicationController
 
     if @bot.save
       builder = StandardBuilder.new(@bot)
-      builder.generateInputNodes
-      5.times do |x|
-        builder.generateAndMapLayerNodes(50)
+      builder.generate_input_nodes
+      5.times do
+        builder.generate_layer_nodes(50)
       end
-      builder.generateAndMapOutputNodes
+      builder.generate_output_nodes
       redirect_to game_path(@game), notice: "Bot was successfully created."
     else
       flash[:error] = @bot.errors.map(&:full_message).join("\n")
@@ -63,17 +65,18 @@ class BotsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_bot
-      @bot = Bot.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def bot_params
-      params.require(:bot).permit(:name, :static)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_bot
+    @bot = Bot.find(params[:id])
+  end
 
-    def get_game
-      @game = Game.find(params[:game_id])
-    end
+  # Only allow a list of trusted parameters through.
+  def bot_params
+    params.require(:bot).permit(:name, :static)
+  end
+
+  def set_game
+    @game = Game.find(params[:game_id])
+  end
 end

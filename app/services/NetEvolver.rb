@@ -11,11 +11,11 @@ class NetEvolver
   # TIE = -1
   # CONTINUE = 0
   # WON = 1
-  def initialize(bot:, iterations:, gamesPerIteration:)
+  def initialize(bot:, iterations:, games_per_iteration:)
     @bot = bot
     @base_net = NeuralNet.new(bot: bot)
     @iterations = iterations
-    @gamesPerIteration = gamesPerIteration
+    @games_per_iteration = games_per_iteration
   end
 
   # Create N slightly randomized versions of the original bot
@@ -32,8 +32,7 @@ class NetEvolver
 
   def getMutation(mutations_count)
     net_array = [base_net]
-    net_array += mutations_count.times.map { NeuralNet.new(bot: base_net, mutation_weight: 10) }
-
+    net_array += mutations_count.times.map { { wins: 0, net: NeuralNet.new(bot: base_net, mutation_weight: 10) } }
   end
 
   def updateNet
