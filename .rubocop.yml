@@ -13,6 +13,9 @@ Style/EmptyMethod:
 Style/GuardClause:
   Enabled: false
 
+Style/RaiseArgs:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: false
 

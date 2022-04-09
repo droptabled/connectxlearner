@@ -23,26 +23,21 @@ class GameEvaluator
     turn_index = rand.round
 
     (game.height * game.width).times do
-      net_value = nets[turn_index].getValue(game_array)
-      result = playPiece(player: player_ids[turn_index], col: net_value)
+      net_value = nets[turn_index].get_value(game_array)
+      result = play_piece(player_id: player_ids[turn_index], col: net_value)
       unless result == CONTINUE
-        game_array = Matrix.zero(game.height, game.width)
-        col_tracker = Array.new(@game.width, 0)
+        @game_array = Matrix.zero(game.height, game.width)
+        @col_tracker = Array.new(@game.width, 0)
         return result
       end
       turn_index = (turn_index + 1) % 2
     end
   end
 
-  def playPiece(player_id:, col:)
+  def play_piece(player_id:, col:)
     raise StandardError.new("Column #{col} is full") if (col_tracker[col] + 1) > (game_array.row_count - 1)
 
-    # TODO: Allow multiple players to play
-    if player == players[0]
-      game_array[col_tracker[col], col] = 1
-    else
-      game_array[col_tracker[col], col] = -1
-    end
+    game_array[col_tracker[col], col] = player_id
     col_tracker[col] += 1
 
     # If the gamearray is full and no one's won its a tie
@@ -50,23 +45,25 @@ class GameEvaluator
       TIE
     else
       result = check_victory(row: col_tracker[col], col: col)
-      if result
-        result
-      else
-        CONTINUE
-      end
+      return result if result
+
+      CONTINUE
     end
   end
 
   # Get the game state from the perspective of player
   # 1 = your pieces
   # -1 = enemy pieces
-  def getGameState(player_id)
-    # TODO: more comprehensive converter capable of handling multiple players
-    if player == players[0]
-      game_array
-    else
-      game_array * -1
+  def get_player_game_state(player_id)
+    game_array.map do |x|
+      case x
+      when player_id
+        1
+      when 0
+        0
+      else
+        -1
+      end
     end
   end
 
@@ -76,7 +73,7 @@ class GameEvaluator
   attr_accessor :col_tracker, :game_array
 
   def check_victory(row:, col:)
-    raise StandardError.new("No player token") if game_array[height, width] == 0
+    raise StandardError.new("No player token") if game_array[height, width].zero?
 
     check_directions(row: row, col: col, vertical: 1) ||                  # Vertical N - S
       check_directions(row: row, col: col, horizontal: 1) ||              # Horizontal E - W
@@ -116,7 +113,6 @@ class GameEvaluator
       row_index = row_index.positive? ? [row_index, game_array.row_count - 1].min : 0
       bounded_count = (row_index - row).abs
     end
-
     unless horizontal.zero?
       col_index = col + count * horizontal
       col_index = col_index.positive? ? [col_index, game_array.column_count - 1].min : 0
