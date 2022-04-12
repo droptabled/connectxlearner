@@ -24,22 +24,23 @@ class NetEvolver
 
   def call
     iterations.times do
-      @base_net = getMutation(4)
+      @base_net = get_mutation(4)
     end
 
     updateNet
   end
 
-  def getMutation(mutations_count)
+  def get_mutation(mutations_count)
     net_array = [base_net]
     net_array += mutations_count.times.map { { wins: 0, net: NeuralNet.new(bot: base_net, mutation_weight: 10) } }
   end
 
-  def updateNet
+  def update_net
     binding.pry
     # TODO: update the weights in the database with hte values in base_net
   end
 
   private
-    attr_reader :base_net, :result
+
+  attr_reader :base_net, :result
 end

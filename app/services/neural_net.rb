@@ -6,22 +6,24 @@ class NeuralNet
     case bot
     when NeuralNet
       @bot_array = bot.bot_array
-      mutate(mutation_weight) if mutation_weight
     when Bot
-      @bot_array = Array.new(bot.max_layer)
-      bot.max_layer.each do |upstream_layer|
+      @bot_array = Array.new(bot.max_layer) { [] }
+      bot.max_layer.times.each do |upstream_layer|
         # skip the first layer since its the input values
-        layer = upstream_layer + 1
-        bot.transfer_nodes.where(layer: layer).preload(:upstream_edges).each do |node|
-          @bot_array[layer].push({ node: node, weight_vector: node.upstream_edges.pluck(:weight) })
+        next if upstream_layer.zero?
+
+        bot.transfer_nodes.where(layer: upstream_layer).preload(:upstream_edges).each do |node|
+          @bot_array[upstream_layer].push({ node: node, weight_vector: node.upstream_edges.pluck(:weight) })
         end
       end
     end
+
+    mutate(mutation_weight) if mutation_weight
   end
 
-  def getValue(game_array)
+  def get_value(game_array)
     input_vector = game_array.flatten
-    max_layer.times do |depth|
+    max_layer.times do
       input_vector = bot_array[layer].map do |node|
         input_vector * node[:weight_vector]
       end
