@@ -9,11 +9,13 @@ class GameEvaluator
   TIE = -1
   CONTINUE = 0
 
-  def initialize(players:)
-    @players = players
+  def initialize(player_nets:)
+    @nets = player_nets
+
+    players = player_nets.map(&:bot)
     @game = players.first.game
-    @nets = players.map { |player| NeuralNet.new(player) }
     @player_ids = players.map(&:id)
+
     @game_array = Matrix.zero(@game.height, @game.width)
     @col_tracker = Array.new(@game.width, 0)
   end
@@ -69,7 +71,7 @@ class GameEvaluator
 
   private
 
-  attr_reader :players, :player_ids, :game, :nets
+  attr_reader :player_ids, :game, :nets
   attr_accessor :col_tracker, :game_array
 
   def check_victory(row:, col:)

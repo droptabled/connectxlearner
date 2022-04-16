@@ -24,11 +24,26 @@ class NetEvolver
 
   def call
     @iterations.times do
-      all_nets = [base_net] + get_mutated_nets(4)
-      all_nets.map! { |net| { wins: 0, net: net } }
+      @base_net = evolve
     end
 
     update_net
+  end
+
+  def evolve
+    all_nets = [base_net] + get_mutated_nets(4)
+    all_nets.map! { |net| { wins: 0, net: net } }
+
+    # Round robin, playing @games_per_iteration games each time
+    all_nets.combination(2).each do |player_nets|
+      game = GameEvaluator.new(player_nets: player_nets.pluck(:net))
+      @games_per_iteration.times do
+        result = game.play
+        binding.pry
+        # TODO: update all_nets with result of game
+      end
+    end
+
   end
 
   def get_mutated_nets(num_children)

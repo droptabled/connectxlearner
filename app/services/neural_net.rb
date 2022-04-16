@@ -6,14 +6,21 @@ class NeuralNet
     case bot
     when NeuralNet
       @transform_vectors = bot.transform_vectors
+      @bot = bot.bot
     when Bot
+      @bot = bot
       @transform_vectors = Array.new(bot.max_layer) { [] }
       bot.max_layer.times.each do |upstream_layer|
         # skip the first layer since its the input values
         next if upstream_layer.zero?
 
         bot.transfer_nodes.where(layer: upstream_layer).preload(:upstream_edges).each do |node|
-          @transform_vectors[upstream_layer].push({ node: node, weight_vector: node.upstream_edges.pluck(:weight) })
+          @transform_vectors[upstream_layer].push(
+            {
+              node: node,
+              weight_vector: Vector.elements(node.upstream_edges.pluck(:weight))
+            }
+          )
         end
       end
     else
@@ -24,7 +31,8 @@ class NeuralNet
   end
 
   def get_value(game_array)
-    input_vector = game_array.flatten
+    input_vector = Vector.elements(game_array.flat_map.to_a)
+
     max_layer.times do
       input_vector = bot_array[layer].map do |node|
         input_vector * node[:weight_vector]
@@ -45,5 +53,5 @@ class NeuralNet
     end
   end
 
-  attr_reader :transform_vectors
+  attr_reader :transform_vectors, :bot
 end
