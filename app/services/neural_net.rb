@@ -5,17 +5,19 @@ class NeuralNet
   def initialize(bot:, mutation_weight: nil)
     case bot
     when NeuralNet
-      @bot_array = bot.bot_array
+      @transform_vectors = bot.transform_vectors
     when Bot
-      @bot_array = Array.new(bot.max_layer) { [] }
+      @transform_vectors = Array.new(bot.max_layer) { [] }
       bot.max_layer.times.each do |upstream_layer|
         # skip the first layer since its the input values
         next if upstream_layer.zero?
 
         bot.transfer_nodes.where(layer: upstream_layer).preload(:upstream_edges).each do |node|
-          @bot_array[upstream_layer].push({ node: node, weight_vector: node.upstream_edges.pluck(:weight) })
+          @transform_vectors[upstream_layer].push({ node: node, weight_vector: node.upstream_edges.pluck(:weight) })
         end
       end
+    else
+      raise "Bot initializer class must be NeuralNet or Bot, not #{bot.class}"
     end
 
     mutate(mutation_weight) if mutation_weight
@@ -35,12 +37,13 @@ class NeuralNet
 
   def mutate(max_weight)
     max_weight = max_weight.to_f
-    @bot_array.each do |layer|
+
+    @transform_vectors.each do |layer|
       layer.each do |hash|
         hash[:weight_vector] = hash[:weight_vector].map { |x| x + rand(-max_weight..max_weight) }
       end
     end
   end
 
-  attr_reader :bot_array
+  attr_reader :transform_vectors
 end

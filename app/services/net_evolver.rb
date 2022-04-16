@@ -23,16 +23,16 @@ class NetEvolver
   # promote the best performer to the next version
 
   def call
-    iterations.times do
-      @base_net = get_mutation(4)
+    @iterations.times do
+      all_nets = [base_net] + get_mutated_nets(4)
+      all_nets.map! { |net| { wins: 0, net: net } }
     end
 
-    updateNet
+    update_net
   end
 
-  def get_mutation(mutations_count)
-    net_array = [base_net]
-    net_array += mutations_count.times.map { { wins: 0, net: NeuralNet.new(bot: base_net, mutation_weight: 10) } }
+  def get_mutated_nets(num_children)
+    num_children.times.map { NeuralNet.new(bot: base_net, mutation_weight: 10) }
   end
 
   def update_net
