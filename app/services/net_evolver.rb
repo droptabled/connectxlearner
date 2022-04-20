@@ -43,7 +43,6 @@ class NetEvolver
         # TODO: update all_nets with result of game
       end
     end
-
   end
 
   def get_mutated_nets(num_children)

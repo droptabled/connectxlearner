@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'matrix'
+
 # Loads a bot neural net from database into memory
 class NeuralNet
   def initialize(bot:, mutation_weight: nil)
@@ -9,13 +11,12 @@ class NeuralNet
       @bot = bot.bot
     when Bot
       @bot = bot
-      @transform_vectors = Array.new(bot.max_layer) { [] }
-      bot.max_layer.times.each do |upstream_layer|
-        # skip the first layer since its the input values
-        next if upstream_layer.zero?
+      @transform_vectors = Array.new(bot.max_layer - 1) { [] }
 
-        bot.transfer_nodes.where(layer: upstream_layer).preload(:upstream_edges).each do |node|
-          @transform_vectors[upstream_layer].push(
+      (bot.max_layer - 1).times.each do |layer|
+        # skip layer 0 since its the input values
+        bot.transfer_nodes.where(layer: layer + 1).preload(:upstream_edges).each do |node|
+          @transform_vectors[layer].push(
             {
               node: node,
               weight_vector: Vector.elements(node.upstream_edges.pluck(:weight))
@@ -33,10 +34,12 @@ class NeuralNet
   def get_value(game_array)
     input_vector = Vector.elements(game_array.flat_map.to_a)
 
-    max_layer.times do
-      input_vector = bot_array[layer].map do |node|
-        input_vector * node[:weight_vector]
-      end
+    (bot.max_layer - 1).times do |layer|
+      input_vector = Vector.elements(
+        transform_vectors[layer].map do |node|
+          input_vector.dot(node[:weight_vector])
+        end
+      )
     end
 
     # return the index of the max value
@@ -46,7 +49,7 @@ class NeuralNet
   def mutate(max_weight)
     max_weight = max_weight.to_f
 
-    @transform_vectors.each do |layer|
+    transform_vectors.each do |layer|
       layer.each do |hash|
         hash[:weight_vector] = hash[:weight_vector].map { |x| x + rand(-max_weight..max_weight) }
       end
