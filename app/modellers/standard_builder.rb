@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+# Class to generate a neural net to the database
 class StandardBuilder
   def initialize(bot)
     @bot = bot
   end
 
+  # Generate input nodes, which take in the game state flat_mapped
   def generate_input_nodes
     generate_nodes(layer: 0, count: bot.game.width * bot.game.height)
   end
@@ -15,8 +17,9 @@ class StandardBuilder
     generate_connections(source_layer: last_layer, target_layer: last_layer + 1)
   end
 
+  # Generate output nodes, which is one of the columns
   def generate_output_nodes
-    generate_layer_nodes(bot.game.width * bot.game.height)
+    generate_layer_nodes(bot.game.width)
   end
 
   private
