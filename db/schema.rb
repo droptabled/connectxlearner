@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_07_052204) do
+ActiveRecord::Schema.define(version: 2022_04_29_021945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 2022_01_07_052204) do
     t.index ["layer"], name: "index_transfer_nodes_on_layer"
   end
 
-  add_foreign_key "transfer_edges", "transfer_nodes", column: "downstream_node_id"
-  add_foreign_key "transfer_edges", "transfer_nodes", column: "upstream_node_id"
+  add_foreign_key "transfer_edges", "transfer_nodes", column: "downstream_node_id", on_delete: :cascade
+  add_foreign_key "transfer_edges", "transfer_nodes", column: "upstream_node_id", on_delete: :cascade
+  add_foreign_key "transfer_nodes", "bots", on_delete: :cascade
 end
