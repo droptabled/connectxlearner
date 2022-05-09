@@ -39,9 +39,10 @@ class GameEvaluator
   def play_piece(player_id:, col:)
     raise StandardError.new("Column #{col} is full") if (col_tracker[col] + 1) > (game_array.row_count - 1)
 
+    # play the piece
     game_array[col_tracker[col], col] = player_id
-    col_tracker[col] += 1
 
+    # check if anyone won
     # If the gamearray is full and no one's won its a tie
     if col_tracker.uniq == [game_array.row_count - 1]
       TIE
@@ -51,6 +52,9 @@ class GameEvaluator
 
       CONTINUE
     end
+
+    # increment the column height tracker
+    col_tracker[col] += 1
   end
 
   # Get the game state from the perspective of player
@@ -75,11 +79,11 @@ class GameEvaluator
   attr_accessor :col_tracker, :game_array
 
   def check_victory(row:, col:)
-    raise StandardError.new("No player token") if game_array[height, width].zero?
+    raise StandardError.new("No player token") if game_array[row, col].zero?
 
     check_directions(row: row, col: col, vertical: 1) ||                  # Vertical N - S
       check_directions(row: row, col: col, horizontal: 1) ||              # Horizontal E - W
-      check_directions(row: row, con: col, horizontal: 1, vertical: 1) || # Diagonal NE - SW
+      check_directions(row: row, col: col, horizontal: 1, vertical: 1) || # Diagonal NE - SW
       check_directions(row: row, col: col, horizontal: 1, vertical: -1)   # Diagonal SE - NW
   end
 
