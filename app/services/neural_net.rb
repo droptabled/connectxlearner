@@ -11,9 +11,9 @@ class NeuralNet
       @bot = bot.bot
     when Bot
       @bot = bot
-      @transform_vectors = Array.new(bot.max_layer - 1) { [] }
+      @transform_vectors = Array.new(bot.max_layer) { [] }
 
-      (bot.max_layer - 1).times.each do |layer|
+      bot.max_layer.times do |layer|
         # skip layer 0 since its the input values
         bot.transfer_nodes.where(layer: layer + 1).preload(:upstream_edges).each do |node|
           @transform_vectors[layer].push(
@@ -34,7 +34,7 @@ class NeuralNet
   def get_value(game_array)
     input_vector = Vector.elements(game_array.flat_map.to_a)
 
-    (bot.max_layer - 1).times do |layer|
+    bot.max_layer.times do |layer|
       input_vector = Vector.elements(
         transform_vectors[layer].map do |node|
           input_vector.dot(node[:weight_vector])
