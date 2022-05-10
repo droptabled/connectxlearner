@@ -5,6 +5,7 @@
 # bot:                bot
 # iterations:         int
 # gamesPerIteration:  int
+# NetEvolver.new(bot: Bot.last, iterations: 50, games_per_iteration: 5).call
 class NetEvolver
   # result based on constant in GameEvalulator
   # TODO: Extract constants to separate include
@@ -39,10 +40,10 @@ class NetEvolver
       game = GameEvaluator.new(player_nets: player_nets.pluck(:net))
       @games_per_iteration.times do
         result = game.play
-        binding.pry
         # TODO: update all_nets with result of game
       end
     end
+    all_nets.max { |h| h[:wins] }[:net]
   end
 
   def get_mutated_nets(num_children)

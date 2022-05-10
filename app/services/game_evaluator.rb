@@ -41,20 +41,18 @@ class GameEvaluator
 
     # play the piece
     game_array[col_tracker[col], col] = player_id
+    result = check_victory(row: col_tracker[col], col: col)
+    col_tracker[col] += 1
 
     # check if anyone won
     # If the gamearray is full and no one's won its a tie
     if col_tracker.uniq == [game_array.row_count - 1]
       TIE
+    elsif result
+      result
     else
-      result = check_victory(row: col_tracker[col], col: col)
-      return result if result
-
       CONTINUE
     end
-
-    # increment the column height tracker
-    col_tracker[col] += 1
   end
 
   # Get the game state from the perspective of player
@@ -88,7 +86,7 @@ class GameEvaluator
   end
 
   def check_directions(row:, col:, horizontal: 0, vertical: 0, target_length: 4)
-    neg_length = check_direction(
+    neg_length = get_length(
       row: row,
       col: col,
       horizontal: horizontal * -1,
@@ -98,7 +96,7 @@ class GameEvaluator
 
     return true if neg_length == target_length
 
-    pos_length = check_direction(
+    pos_length = get_length(
       row: row,
       col: col,
       horizontal: horizontal,
@@ -112,7 +110,7 @@ class GameEvaluator
 
   # Horizontal -1 (West), 1 (East)
   # Vertical -1 (South), 1 (North)
-  def check_direction(row:, col:, horizontal: 0, vertical: 0, count: 4)
+  def get_length(row:, col:, horizontal: 0, vertical: 0, count: 4)
     bounded_count = nil
     unless vertical.zero?
       row_index = row + count * vertical
