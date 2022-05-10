@@ -3,6 +3,7 @@
 require 'matrix'
 
 # Handles the game logic and victory determination
+# Players are assigned ids by order of player_nets
 # Params:
 # players: Iterable of bots
 class GameEvaluator
@@ -11,11 +12,7 @@ class GameEvaluator
 
   def initialize(player_nets:)
     @nets = player_nets
-
-    players = player_nets.map(&:bot)
     @game = players.first.game
-    @player_ids = players.map(&:id)
-
     @game_array = Matrix.zero(@game.height, @game.width)
     @col_tracker = Array.new(@game.width, 0)
   end
@@ -26,7 +23,7 @@ class GameEvaluator
 
     (game.height * game.width).times do
       net_value = nets[turn_index].get_value(game_array)
-      result = play_piece(player_id: player_ids[turn_index], col: net_value)
+      result = play_piece(id: turn_index + 1, col: net_value)
       unless result == CONTINUE
         @game_array = Matrix.zero(game.height, game.width)
         @col_tracker = Array.new(@game.width, 0)
@@ -36,11 +33,11 @@ class GameEvaluator
     end
   end
 
-  def play_piece(player_id:, col:)
+  def play_piece(id:, col:)
     raise StandardError.new("Column #{col} is full") if (col_tracker[col] + 1) > (game_array.row_count - 1)
 
     # play the piece
-    game_array[col_tracker[col], col] = player_id
+    game_array[col_tracker[col], col] = id
     result = check_victory(row: col_tracker[col], col: col)
     col_tracker[col] += 1
 
@@ -58,13 +55,13 @@ class GameEvaluator
   # Get the game state from the perspective of player
   # 1 = your pieces
   # -1 = enemy pieces
-  def get_player_game_state(player_id)
+  def get_player_game_state(id)
     game_array.map do |x|
       case x
-      when player_id
+      when id
         1
       when 0
-        0
+        -0.0001 # give a small negative value to allow for some strategy in the empty initial state
       else
         -1
       end
@@ -73,7 +70,7 @@ class GameEvaluator
 
   private
 
-  attr_reader :player_ids, :game, :nets
+  attr_reader :game, :nets
   attr_accessor :col_tracker, :game_array
 
   def check_victory(row:, col:)
@@ -124,10 +121,10 @@ class GameEvaluator
       bounded_count = bounded_count ? [diff, bounded_count].min : diff
     end
 
-    player_id = game_array[row, col]
+    id = game_array[row, col]
     player_direction = 1
     (1..bounded_count).each do |n|
-      if game_array[row + n * vertical, col + n * horizontal] == player_id
+      if game_array[row + n * vertical, col + n * horizontal] == id
         player_direction += 1
       else
         return player_direction
