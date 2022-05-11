@@ -12,7 +12,7 @@ class GameEvaluator
 
   def initialize(player_nets:)
     @nets = player_nets
-    @game = players.first.game
+    @game = player_nets.first.bot.game
     @game_array = Matrix.zero(@game.height, @game.width)
     @col_tracker = Array.new(@game.width, 0)
   end
