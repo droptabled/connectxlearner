@@ -39,8 +39,8 @@ class NetEvolver
     all_nets.combination(2).each do |player_nets|
       game = GameEvaluator.new(player_nets: player_nets.pluck(:net))
       @games_per_iteration.times do
-        result = game.play
-        # TODO: update all_nets with result of game
+        winner_id = game.play
+        player_nets[winner_id][:wins] += 1
       end
     end
     binding.pry

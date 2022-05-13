@@ -13,6 +13,8 @@ class GameEvaluator
   def initialize(player_nets:)
     @nets = player_nets
     @game = player_nets.first.bot.game
+    # the play piece ids need to be incremented by 1 to not conflict with the empty state
+    @piece_ids = (1..player_nets.count).to_a
     @game_array = Matrix.zero(@game.height, @game.width)
     @col_tracker = Array.new(@game.width, 0)
   end
@@ -22,9 +24,8 @@ class GameEvaluator
     turn_index = rand.round
 
     (game.height * game.width).times do
-      id = turn_index + 1
-      game_values = nets[turn_index].get_value(get_player_game_state(id))
-      result = play_piece(id: id, col: max_playable_column(game_values))
+      game_values = nets[turn_index].get_value(get_player_game_state(piece_ids[turn_index]))
+      result = play_piece(id: piece_ids[turn_index], col: max_playable_column(game_values))
       unless result == CONTINUE
         # GameDisplayer.show(@game_array)
         @game_array = Matrix.zero(game.height, game.width)
@@ -50,7 +51,7 @@ class GameEvaluator
     if col_tracker.uniq == [game_array.row_count - 1]
       TIE
     elsif result
-      result
+      id - 1 # Subtract 1 to get back to the regular index instead of game index
     else
       CONTINUE
     end
@@ -74,7 +75,7 @@ class GameEvaluator
 
   private
 
-  attr_reader :game, :nets
+  attr_reader :game, :nets, :piece_ids
   attr_accessor :col_tracker, :game_array
 
   def check_victory(row:, col:)
