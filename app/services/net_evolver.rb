@@ -43,6 +43,7 @@ class NetEvolver
         # TODO: update all_nets with result of game
       end
     end
+    binding.pry
     all_nets.max { |h| h[:wins] }[:net]
   end
 

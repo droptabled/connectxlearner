@@ -3,7 +3,7 @@
 require 'matrix'
 
 # Handles the game logic and victory determination
-# Players are assigned ids by order of player_nets
+# Players are assigned ids by order of player_nets starting from 1
 # Params:
 # players: Iterable of bots
 class GameEvaluator
@@ -22,9 +22,11 @@ class GameEvaluator
     turn_index = rand.round
 
     (game.height * game.width).times do
-      net_value = nets[turn_index].get_value(game_array)
-      result = play_piece(id: turn_index + 1, col: net_value)
+      id = turn_index + 1
+      game_values = nets[turn_index].get_value(get_player_game_state(id))
+      result = play_piece(id: id, col: max_playable_column(game_values))
       unless result == CONTINUE
+        # GameDisplayer.show(@game_array)
         @game_array = Matrix.zero(game.height, game.width)
         @col_tracker = Array.new(@game.width, 0)
         return result
@@ -33,9 +35,11 @@ class GameEvaluator
     end
   end
 
-  def play_piece(id:, col:)
-    raise StandardError.new("Column #{col} is full") if (col_tracker[col] + 1) > (game_array.row_count - 1)
+  def max_playable_column(output_array)
+    output_array.find { |hash| col_tracker[hash[:index]] < @game.height - 1 }[:index]
+  end
 
+  def play_piece(id:, col:)
     # play the piece
     game_array[col_tracker[col], col] = id
     result = check_victory(row: col_tracker[col], col: col)

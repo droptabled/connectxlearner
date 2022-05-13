@@ -42,8 +42,8 @@ class NeuralNet
       )
     end
 
-    # return the index of the max value
-    input_vector.each_with_index.max[1]
+    # return the selection vector sorted by max weight, descending order
+    input_vector.to_a.each_with_index.map { |val, index| { value: val, index: index } }.sort { |h| h[:value] }.reverse
   end
 
   def mutate(max_weight)
