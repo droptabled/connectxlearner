@@ -5,22 +5,21 @@
 # bot:                bot
 # iterations:         int
 # gamesPerIteration:  int
-# NetEvolver.new(bot: Bot.last, iterations: 50, games_per_iteration: 5).call
+# NetEvolver.new(bot: Bot.last, iterations: 50).call
 class NetEvolver
   # result based on constant in GameEvalulator
   # TODO: Extract constants to separate include
   # TIE = -1
   # CONTINUE = 0
   # WON = 1
-  def initialize(bot:, iterations:, games_per_iteration:)
+  def initialize(bot:, iterations:)
     @bot = bot
     @base_net = NeuralNet.new(bot: bot)
     @iterations = iterations
-    @games_per_iteration = games_per_iteration
   end
 
   # Create N slightly randomized versions of the original bot
-  # Play M games against each other (and the original) round robin
+  # Play games against each other (and the original) round robin
   # promote the best performer to the next version
 
   def call
@@ -35,13 +34,10 @@ class NetEvolver
     all_nets = [base_net] + get_mutated_nets(4)
     all_nets.map! { |net| { wins: 0, net: net } }
 
-    # Round robin, playing @games_per_iteration games each time
     all_nets.combination(2).each do |player_nets|
       game = GameEvaluator.new(player_nets: player_nets.pluck(:net))
-      @games_per_iteration.times do
-        winner_id = game.play
-        player_nets[winner_id][:wins] += 1
-      end
+      winner_id = game.play
+      player_nets[winner_id][:wins] += 1
     end
     binding.pry
     all_nets.max { |h| h[:wins] }[:net]
