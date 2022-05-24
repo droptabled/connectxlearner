@@ -33,7 +33,6 @@ class NeuralNet
 
   def get_value(game_array)
     input_vector = Vector.elements(game_array.flat_map.to_a)
-
     bot.max_layer.times do |layer|
       input_vector = Vector.elements(
         transform_vectors[layer].map do |node|
@@ -54,6 +53,10 @@ class NeuralNet
         hash[:weight_vector] = hash[:weight_vector].map { |x| x + rand(-max_weight..max_weight) }
       end
     end
+  end
+
+  def save_net
+    puts "Implement the net saver dammit"
   end
 
   attr_reader :transform_vectors, :bot

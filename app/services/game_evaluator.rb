@@ -3,7 +3,9 @@
 require 'matrix'
 
 # Handles the game logic and victory determination
-# Players are assigned ids by order of player_nets starting from 1
+# Return value is the index of the player_net that won
+# Returns -1 on tie
+# Players are internally assigned ids by order of player_nets starting from 1
 # Params:
 # players: Iterable of bots
 class GameEvaluator
