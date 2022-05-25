@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'matrix'
+require 'nmatrix'
 
 # Loads a bot neural net from database into memory
 class NeuralNet
@@ -19,7 +19,7 @@ class NeuralNet
           @transform_vectors[layer].push(
             {
               node: node,
-              weight_vector: Vector.elements(node.upstream_edges.pluck(:weight))
+              weight_vector: N[node.upstream_edges.pluck(:weight)].transpose
             }
           )
         end
@@ -32,13 +32,14 @@ class NeuralNet
   end
 
   def get_value(game_array)
-    input_vector = Vector.elements(game_array.flat_map.to_a)
+    input_vector = N[game_array.flat_map.to_a]
     bot.max_layer.times do |layer|
-      input_vector = Vector.elements(
+      input_vector = N[
         transform_vectors[layer].map do |node|
           input_vector.dot(node[:weight_vector])
-        end
-      )
+        end,
+        dtype: :int32
+      ]
     end
 
     # return the selection vector sorted by max weight, descending order
