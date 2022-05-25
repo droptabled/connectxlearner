@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_29_021945) do
+ActiveRecord::Schema.define(version: 2022_05_25_024458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,22 +31,14 @@ ActiveRecord::Schema.define(version: 2022_04_29_021945) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "transfer_edges", force: :cascade do |t|
-    t.bigint "upstream_node_id"
-    t.bigint "downstream_node_id"
-    t.float "weight", default: 0.0
-    t.index ["downstream_node_id"], name: "index_transfer_edges_on_downstream_node_id"
-    t.index ["upstream_node_id"], name: "index_transfer_edges_on_upstream_node_id"
-  end
-
-  create_table "transfer_nodes", force: :cascade do |t|
-    t.integer "layer", null: false
+  create_table "transfer_layers", force: :cascade do |t|
     t.bigint "bot_id"
-    t.index ["bot_id"], name: "index_transfer_nodes_on_bot_id"
-    t.index ["layer"], name: "index_transfer_nodes_on_layer"
+    t.integer "layer_matrix", array: true
+    t.integer "depth"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["bot_id"], name: "index_transfer_layers_on_bot_id"
   end
 
-  add_foreign_key "transfer_edges", "transfer_nodes", column: "downstream_node_id", on_delete: :cascade
-  add_foreign_key "transfer_edges", "transfer_nodes", column: "upstream_node_id", on_delete: :cascade
-  add_foreign_key "transfer_nodes", "bots", on_delete: :cascade
+  add_foreign_key "transfer_layers", "bots", on_delete: :cascade
 end
