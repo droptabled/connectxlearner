@@ -20,7 +20,7 @@ class BotsController < ApplicationController
 
   # GET /bots/1/edit
   def edit
-    @nodes = @bot.transfer_nodes.includes(:upstream_edges, :downstream_edges)
+    @layers = @bot.transfer_layers
   end
 
   # POST /bots or /bots.json
@@ -30,11 +30,10 @@ class BotsController < ApplicationController
 
     if @bot.save
       builder = StandardBuilder.new(@bot)
-      builder.generate_input_nodes
       5.times do
-        builder.generate_layer_nodes(50)
+        builder.generate_layer(50)
       end
-      builder.generate_output_nodes
+      builder.generate_output_layer
       redirect_to game_path(@game), notice: "Bot was successfully created."
     else
       flash[:error] = @bot.errors.map(&:full_message).join("\n")

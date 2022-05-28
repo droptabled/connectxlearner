@@ -1,8 +1,8 @@
 <%= javascript_pack_tag 'botgraph' %>
 <h1><%= @bot.name %> Bot</h1>
 
-<% @nodes.each do |node| %>
-  <%= node.id %>
+<% @layers.each do |layer| %>
+  <%= layer.id %>
 <% end %>
 
 <div id='bot-graph' class='vis-network'>
