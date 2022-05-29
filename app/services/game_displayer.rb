@@ -5,9 +5,9 @@ require 'matrix'
 # Utility module to output game matrix more nicely
 module GameDisplayer
   def self.show(matrix)
-    puts "Game Array: #{matrix.row_count} x #{matrix.column_count}"
+    puts "Game Array: #{matrix.rows} x #{matrix.cols}"
     puts "-------------------------------------"
-    matrix.row_vectors.reverse.each do |row|
+    matrix.each_row.reverse_each do |row|
       puts row.to_a.join(" | ")
     end
     puts "-------------------------------------"

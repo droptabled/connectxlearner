@@ -32,9 +32,11 @@ ActiveRecord::Schema.define(version: 2022_05_25_024458) do
   end
 
   create_table "transfer_layers", force: :cascade do |t|
-    t.bigint "bot_id"
-    t.integer "layer_matrix", array: true
-    t.integer "depth"
+    t.bigint "bot_id", null: false
+    t.integer "layer_matrix", null: false, array: true
+    t.integer "depth", null: false
+    t.integer "row_count", null: false
+    t.integer "col_count", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["bot_id"], name: "index_transfer_layers_on_bot_id"
