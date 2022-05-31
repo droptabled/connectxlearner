@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'matrix'
+require 'nmatrix'
 
 # Handles the game logic and victory determination
 # Return value is the index of the player_net that won
@@ -17,8 +17,7 @@ class GameEvaluator
     @game = player_nets.first.bot.game
     # the play piece ids need to be incremented by 1 to not conflict with the empty state
     @piece_ids = (1..player_nets.count).to_a
-    @game_array = Matrix.zero(@game.height, @game.width)
-    @col_tracker = Array.new(@game.width, 0)
+    set_empty_state
   end
 
   def play
@@ -30,48 +29,10 @@ class GameEvaluator
       result = play_piece(id: piece_ids[turn_index], col: max_playable_column(game_values))
       unless result == CONTINUE
         # GameDisplayer.show(@game_array)
-        @game_array = Matrix.zero(game.height, game.width)
-        @col_tracker = Array.new(@game.width, 0)
+        set_empty_state
         return result
       end
       turn_index = (turn_index + 1) % 2
-    end
-  end
-
-  def max_playable_column(output_array)
-    output_array.find { |hash| col_tracker[hash[:index]] < @game.height - 1 }[:index]
-  end
-
-  def play_piece(id:, col:)
-    # play the piece
-    game_array[col_tracker[col], col] = id
-    result = check_victory(row: col_tracker[col], col: col)
-    col_tracker[col] += 1
-
-    # check if anyone won
-    # If the gamearray is full and no one's won its a tie
-    if col_tracker.uniq == [game_array.row_count - 1]
-      TIE
-    elsif result
-      id - 1 # Subtract 1 to get back to the regular index instead of game index
-    else
-      CONTINUE
-    end
-  end
-
-  # Get the game state from the perspective of player
-  # 1 = your pieces
-  # -1 = enemy pieces
-  def get_player_game_state(id)
-    game_array.map do |x|
-      case x
-      when id
-        1
-      when 0
-        -0.0001 # give a small negative value to allow for some strategy in the empty initial state
-      else
-        -1
-      end
     end
   end
 
@@ -139,5 +100,47 @@ class GameEvaluator
     end
 
     player_direction
+  end
+
+  # Get the game state from the perspective of player
+  # 1 = your pieces
+  # -1 = enemy pieces
+  def get_player_game_state(id)
+    game_array.map do |x|
+      case x
+      when id
+        1
+      when 0
+        -0.0001 # give a small negative value to allow for some strategy in the empty initial state
+      else
+        -1
+      end
+    end
+  end
+
+  def max_playable_column(output_array)
+    output_array.find { |hash| col_tracker[hash[:index]] < @game.height - 1 }[:index]
+  end
+
+  def play_piece(id:, col:)
+    # play the piece
+    game_array[col_tracker[col], col] = id
+    result = check_victory(row: col_tracker[col], col: col)
+    col_tracker[col] += 1
+
+    # check if anyone won
+    # If the gamearray is full and no one's won its a tie
+    if col_tracker.uniq == [game_array.row_count - 1]
+      TIE
+    elsif result
+      id - 1 # Subtract 1 to get back to the regular index instead of game index
+    else
+      CONTINUE
+    end
+  end
+
+  def set_empty_state
+    @game_array = NMatrix.new([@game.height, @game.width], 0)
+    @col_tracker = NMatrix.new([1, @game.width], 0)
   end
 end

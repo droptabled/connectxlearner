@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'matrix'
-
 # Utility module to output game matrix more nicely
 module GameDisplayer
   def self.show(matrix)
