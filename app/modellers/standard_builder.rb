@@ -67,7 +67,7 @@ class StandardBuilder
       row_count = layers[layer[:depth] - 1].col_count
       layer.update!(
         row_count: row_count,
-        layer_matrix: Array.new(row_count * layer.col_count, 0)
+        layer_matrix: Array.new(row_count * layer.col_count, 0.0)
       )
     end
   end

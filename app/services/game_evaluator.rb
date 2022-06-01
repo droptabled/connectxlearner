@@ -17,28 +17,29 @@ class GameEvaluator
     @game = player_nets.first.bot.game
     # the play piece ids need to be incremented by 1 to not conflict with the empty state
     @piece_ids = (1..player_nets.count).to_a
-    set_empty_state
+    @player_count = player_nets.count
   end
 
   def play
-    # Flip a coin to see who goes first
-    turn_index = rand.round
+    # Randomly select who goes first
+    turn_index = rand(player_count)
+    set_empty_state
 
     (game.height * game.width).times do
       game_values = nets[turn_index].get_value(get_player_game_state(piece_ids[turn_index]))
       result = play_piece(id: piece_ids[turn_index], col: max_playable_column(game_values))
       unless result == CONTINUE
         # GameDisplayer.show(@game_array)
-        set_empty_state
         return result
       end
-      turn_index = (turn_index + 1) % 2
+
+      turn_index = (turn_index + 1) % player_count
     end
   end
 
   private
 
-  attr_reader :game, :nets, :piece_ids
+  attr_reader :game, :nets, :piece_ids, :player_count
   attr_accessor :col_tracker, :game_array
 
   def check_victory(row:, col:)
@@ -109,11 +110,11 @@ class GameEvaluator
     game_array.map do |x|
       case x
       when id
-        1
+        1.0
       when 0
         -0.0001 # give a small negative value to allow for some strategy in the empty initial state
       else
-        -1
+        -1.0
       end
     end
   end
@@ -140,7 +141,7 @@ class GameEvaluator
   end
 
   def set_empty_state
-    @game_array = NMatrix.new([@game.height, @game.width], 0)
+    @game_array = NMatrix.new([@game.height, @game.width], 0.0)
     @col_tracker = NMatrix.new([1, @game.width], 0)
   end
 end
