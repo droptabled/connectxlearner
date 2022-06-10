@@ -34,8 +34,6 @@ class StandardBuilder
   end
 
   def generate_input_layer(count)
-    raise 'Cannot generate input layer for a bot that already has layers' unless bot.max_layer.zero?
-
     TransferLayer.create!(
       bot: bot,
       layer_matrix: Array.new(bot.game.height * bot.game.width * count, 0.0),

@@ -3,43 +3,40 @@
 require 'nmatrix'
 
 # Handles the game logic and victory determination
-# Return value is the index of the player_net that won
 # Returns -1 on tie
-# Players are internally assigned ids by order of player_nets starting from 1
+# Players are internally assigned ids starting from 0
 # Params:
-# players: Iterable of bots
+# game:                   Game model        The game model the evaluator is played on
+# player_count:           integer           The number of players playing
+# first_player_index:     integer           Index of the player who plays first (from 0 to player_count - 1)
 class GameEvaluator
-  TIE = -1
-  CONTINUE = 0
+  TIE = -2
+  CONTINUE = -1
 
-  def initialize(player_nets:)
-    @nets = player_nets
-    @game = player_nets.first.bot.game
-    # the play piece ids need to be incremented by 1 to not conflict with the empty state
-    @piece_ids = (1..player_nets.count).to_a
-    @player_count = player_nets.count
-  end
+  # Value of an empty array elem
+  # give a small positive value to allow for some strategy in the empty initial state
+  EMPTY_VALUE = 0.0001
 
-  def play
-    # Randomly select who goes first
-    turn_index = rand(player_count)
+  def initialize(game:, player_count:, first_player_index:)
+    @game = game
+    @player_count = player_count
+    @turn_index = first_player_index
     set_empty_state
-
-    (game.height * game.width).times do
-      game_values = nets[turn_index].get_value(get_player_game_state(piece_ids[turn_index]))
-      result = play_piece(id: piece_ids[turn_index], col: max_playable_column(game_values))
-      unless result == CONTINUE
-        # GameDisplayer.show(@game_array)
-        return result
-      end
-
-      turn_index = (turn_index + 1) % player_count
-    end
   end
+
+  def play_turn(column)
+    val = play_piece(id: turn_index, col: column)
+    @turn_index = (turn_index + 1) % player_count
+    val
+  end
+
+  # def player_play_piece(piece_index, column)
+  #   play_piece(id: piece_ids[piece_index], col: column)
+  # end
 
   private
 
-  attr_reader :game, :nets, :piece_ids, :player_count
+  attr_reader :game, :player_count, :turn_index
   attr_accessor :col_tracker, :game_array
 
   def check_victory(row:, col:)
@@ -69,7 +66,6 @@ class GameEvaluator
       vertical: vertical,
       count: target_length - neg_length + 1
     )
-
     # subtract 1 since the center node is counted twice
     neg_length + pos_length - 1 >= target_length
   end
@@ -80,12 +76,12 @@ class GameEvaluator
     bounded_count = nil
     unless vertical.zero?
       row_index = row + count * vertical
-      row_index = row_index.positive? ? [row_index, game_array.row_count - 1].min : 0
+      row_index = row_index.positive? ? [row_index, game_array.rows - 1].min : 0
       bounded_count = (row_index - row).abs
     end
     unless horizontal.zero?
       col_index = col + count * horizontal
-      col_index = col_index.positive? ? [col_index, game_array.column_count - 1].min : 0
+      col_index = col_index.positive? ? [col_index, game_array.cols - 1].min : 0
       diff = (col_index - col).abs
       bounded_count = bounded_count ? [diff, bounded_count].min : diff
     end
@@ -103,22 +99,6 @@ class GameEvaluator
     player_direction
   end
 
-  # Get the game state from the perspective of player
-  # 1 = your pieces
-  # -1 = enemy pieces
-  def get_player_game_state(id)
-    game_array.map do |x|
-      case x
-      when id
-        1.0
-      when 0
-        -0.0001 # give a small negative value to allow for some strategy in the empty initial state
-      else
-        -1.0
-      end
-    end
-  end
-
   def max_playable_column(output_array)
     output_array.find { |hash| col_tracker[hash[:index]] < @game.height - 1 }[:index]
   end
@@ -130,18 +110,18 @@ class GameEvaluator
     col_tracker[col] += 1
 
     # check if anyone won
-    # If the gamearray is full and no one's won its a tie
-    if col_tracker.uniq == [game_array.row_count - 1]
+    if result
+      id
+    elsif col_tracker.uniq == [game_array.rows - 1]
+      # If the gamearray is full and no one's won its a tie
       TIE
-    elsif result
-      id - 1 # Subtract 1 to get back to the regular index instead of game index
     else
       CONTINUE
     end
   end
 
   def set_empty_state
-    @game_array = NMatrix.new([@game.height, @game.width], 0.0)
+    @game_array = NMatrix.new([@game.height, @game.width], EMPTY_VALUE)
     @col_tracker = NMatrix.new([1, @game.width], 0)
   end
 end
