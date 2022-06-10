@@ -13,10 +13,4 @@ test:
   <<: *default
   database: connectxbot_test
   username: connectxbot
-  password: <%= ENV['CONNECTXBOT_DATABASE_PASSWORD'] %>
-
-production:
-  <<: *default
-  database: connectxbot_production
-  username: connectxbot
-  password: <%= ENV['CONNECTXBOT_DATABASE_PASSWORD'] %>
+  password: password
