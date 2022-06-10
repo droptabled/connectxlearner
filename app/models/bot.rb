@@ -5,6 +5,6 @@ class Bot < ApplicationRecord
   has_many :transfer_layers
 
   def max_layer
-    transfer_layers.maximum(:depth) || 0
+    @max_layer ||= transfer_layers.maximum(:depth) || 0
   end
 end

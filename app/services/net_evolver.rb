@@ -27,13 +27,17 @@ class NetEvolver
     @base_net.save_net
   end
 
+  private
+
+  attr_reader :base_net
+
   def evolve
     all_nets = [base_net] + get_mutated_nets(4)
     all_nets.map!.with_index { |net, id| { id: id, wins: 0, net: net } }
 
     puts Benchmark.measure {
       all_nets.combination(2) do |player_nets|
-        game = GameEvaluator.new(player_nets: player_nets.pluck(:net))
+        game = BotGameEvaluator.new(player_nets: player_nets.pluck(:net))
         winner_id = game.play
 
         # if winner_id is -1 no one won
@@ -41,37 +45,33 @@ class NetEvolver
       end
     }
 
-    puts Benchmark.measure {
-      threads = []
-      all_nets.combination(2) do |player_nets|
-        threads << Thread.new {
-          winner = GameEvaluator.new(player_nets: player_nets.pluck(:net)).play
-          if winner >= 0
-            player_nets[winner][:id]
-          else
-            -1
-          end
-        }
-      end
+    # puts Benchmark.measure {
+    #   threads = []
+    #   all_nets.combination(2) do |player_nets|
+    #     threads << Thread.new {
+    #       winner = GameEvaluator.new(player_nets: player_nets.pluck(:net)).play
+    #       if winner >= 0
+    #         player_nets[winner][:id]
+    #       else
+    #         -1
+    #       end
+    #     }
+    #   end
 
-      threads.each do |t|
-        t.join
-        winner = t.value
-        all_nets[winner][:wins] += 1 if winner >= 0
-      end
-    }
+    #   threads.each do |t|
+    #     t.join
+    #     winner = t.value
+    #     all_nets[winner][:wins] += 1 if winner >= 0
+    #   end
+    # }
 
-    puts "==============================="
+    # puts "==============================="
 
     # return the bot with the max amount of wins
     all_nets.max { |h| h[:wins] }[:net]
   end
 
   def get_mutated_nets(num_children)
-    num_children.times.map { NeuralNet.new(bot: base_net, mutation_weight: 10) }
+    num_children.times.map { NeuralNet.new(bot: base_net, mutation_weight: 1.0) }
   end
-
-  private
-
-  attr_reader :base_net
 end
