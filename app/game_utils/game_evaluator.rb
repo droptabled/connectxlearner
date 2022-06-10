@@ -40,7 +40,7 @@ class GameEvaluator
   attr_accessor :col_tracker, :game_array
 
   def check_victory(row:, col:)
-    raise StandardError.new("No player token") if game_array[row, col].zero?
+    raise StandardError.new("No player token") if game_array[row, col] == EMPTY_VALUE
 
     check_directions(row: row, col: col, vertical: 1) ||                  # Vertical N - S
       check_directions(row: row, col: col, horizontal: 1) ||              # Horizontal E - W

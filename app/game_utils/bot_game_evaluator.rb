@@ -10,11 +10,10 @@ require 'nmatrix'
 # players: Iterable of neural nets
 class BotGameEvaluator < GameEvaluator
   def initialize(player_nets:)
-    binding.pry
     super(
       game: player_nets.first.bot.game,
       player_count: player_nets.count,
-      turn_index: rand(player_nets.count) # Randomly select who goes first
+      first_player_index: rand(player_nets.count) # Randomly select who goes first
     )
     @nets = player_nets
   end
