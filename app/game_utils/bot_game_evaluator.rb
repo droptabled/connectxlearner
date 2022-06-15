@@ -24,7 +24,7 @@ class BotGameEvaluator < GameEvaluator
     (game.height * game.width).times do
       game_values = nets[turn_index].get_value(get_player_game_state(turn_index))
       result = play_piece(id: turn_index, col: max_playable_column(game_values))
-      GameDisplayer.show(@game_array)
+      GameDisplayer.show(matrix: @game_array, empty_value: EMPTY_VALUE, empty_length: 3)
       return result unless result == CONTINUE
 
       @turn_index = (turn_index + 1) % player_count

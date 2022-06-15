@@ -7,8 +7,7 @@ class PlayController < ApplicationController
   end
 
   def create
-    opponent = Bot.find(params[:opponent_id])
-    AdversaryEvolution.new(@bot, opponent, iterations: params[:times].to_i).call
+    NetEvolver.new(@bot, iterations: params[:times].to_i).call
   end
 
   private
