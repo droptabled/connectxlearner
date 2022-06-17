@@ -17,6 +17,8 @@ class GameEvaluator
   # give a small positive value to allow for some strategy in the empty initial state
   EMPTY_VALUE = 0.0001
 
+  attr_reader :game_array
+
   def initialize(game:, player_count:, first_player_index:)
     @game = game
     @player_count = player_count
@@ -37,7 +39,8 @@ class GameEvaluator
   private
 
   attr_reader :game, :player_count, :turn_index
-  attr_accessor :col_tracker, :game_array
+  attr_writer :game_array
+  attr_accessor :col_tracker
 
   def check_victory(row:, col:)
     raise StandardError.new("No player token") if game_array[row, col] == EMPTY_VALUE
