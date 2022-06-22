@@ -60,6 +60,12 @@ RSpec.describe GameEvaluator do
       game_evaluator.play_turn(7) # 0
       result = game_evaluator.play_turn(7) # 1
 
+      # End state
+      # x x x 1
+      # x x 1 0
+      # x 1 0 1
+      # 1 0 1 0
+
       expect(result).to eq(1)
     end
   end
