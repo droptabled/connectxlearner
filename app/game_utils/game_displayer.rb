@@ -7,7 +7,7 @@ module GameDisplayer
     puts "Game Array: #{matrix.rows} x #{matrix.cols}"
     puts "-------------------------------------"
     matrix.each_row.reverse_each do |row|
-      puts row.to_a.map{ |v| v == empty_value ? str : v }.join(" | ")
+      puts row.to_a.map { |v| v == empty_value ? str : v }.join(" | ")
     end
     puts "-------------------------------------"
     nil # suppress vector output
