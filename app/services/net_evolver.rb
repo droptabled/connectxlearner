@@ -24,7 +24,7 @@ class NetEvolver
       @base_net = evolve
     end
 
-    @base_net.save_net
+    @base_net.save_evolved_net
   end
 
   private
@@ -37,15 +37,15 @@ class NetEvolver
 
     # Regular Run
 
-    # puts Benchmark.measure {
-    #   all_nets.combination(2) do |player_nets|
-    #     game = BotGameEvaluator.new(player_nets: player_nets.pluck(:net))
-    #     winner_id = game.play
+    puts Benchmark.measure {
+      all_nets.combination(2) do |player_nets|
+        game = BotGameEvaluator.new(player_nets: player_nets.pluck(:net))
+        winner_id = game.play
 
-    #     # if winner_id is -1 no one won
-    #     player_nets[winner_id][:wins] += 1 if winner_id >= 0
-    #   end
-    # }
+        # if winner_id is -1 no one won
+        player_nets[winner_id][:wins] += 1 if winner_id >= 0
+      end
+    }
 
     # Thread Run
 
@@ -70,6 +70,10 @@ class NetEvolver
     # }
 
     # Process Fork run
+
+    # puts Benchmark.measure {
+      
+    # }
 
     # return the bot with the max amount of wins
     all_nets.max { |h| h[:wins] }[:net]

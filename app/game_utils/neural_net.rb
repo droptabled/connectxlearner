@@ -7,11 +7,13 @@ class NeuralNet
   def initialize(bot:, mutation_weight: nil)
     case bot
     when NeuralNet
+      @mutation_count = bot.instance_variable_get(:@mutation_count)
       @bot = bot.bot
       @matrix_transfer_layers = bot.matrix_transfer_layers
     when Bot
+      @mutation_count = 0
       @bot = bot
-      @matrix_transfer_layers = bot.transfer_layers.to_a.map! do |layer|
+      @matrix_transfer_layers = bot.transfer_layers.order(:depth).to_a.map! do |layer|
         {
           weight_array: NMatrix.new([layer.row_count, layer.col_count], layer.layer_matrix),
           layer: layer
@@ -35,13 +37,24 @@ class NeuralNet
   end
 
   def mutate(max_weight)
+    @mutation_count += 1
     matrix_transfer_layers.each do |transfer_layer|
       transfer_layer[:weight_array].map! { |x| x + rand(-max_weight..max_weight) }
     end
   end
 
-  def save_net
-    puts "Implement the net saver dammit"
+  def save_evolved_net
+    evolved_bot = bot.dup
+    evolved_bot.parent_bot = bot
+    evolved_bot.evolution_count = bot.evolution_count + @mutation_count
+    evolved_bot.save!
+
+    matrix_transfer_layers.each do |layer|
+      new_layer = layer[:layer].dup
+      new_layer.bot = evolved_bot
+      new_layer.layer_matrix = layer[:weight_array].to_a
+      new_layer.save!
+    end
   end
 
   attr_reader :matrix_transfer_layers, :bot
