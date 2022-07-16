@@ -52,7 +52,7 @@ class NeuralNet
     matrix_transfer_layers.each do |layer|
       new_layer = layer[:layer].dup
       new_layer.bot = evolved_bot
-      new_layer.layer_matrix = layer[:weight_array].to_a
+      new_layer.layer_matrix = layer[:weight_array].to_flat_a
       new_layer.save!
     end
   end

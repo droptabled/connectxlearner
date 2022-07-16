@@ -20,8 +20,11 @@ class NetEvolver
   # promote the best performer to the next version
 
   def call
+    n = 0.0
     @iterations.times do
       @base_net = evolve
+      n += 1
+      printf("\rProgress: %f", n / @iterations * 100) if n % (iterations/100) == 0
     end
 
     @base_net.save_evolved_net
@@ -37,15 +40,13 @@ class NetEvolver
 
     # Regular Run
 
-    puts Benchmark.measure {
-      all_nets.combination(2) do |player_nets|
-        game = BotGameEvaluator.new(player_nets: player_nets.pluck(:net))
-        winner_id = game.play
+    all_nets.combination(2) do |player_nets|
+      game = BotGameEvaluator.new(player_nets: player_nets.pluck(:net))
+      winner_id = game.play
 
-        # if winner_id is -1 no one won
-        player_nets[winner_id][:wins] += 1 if winner_id >= 0
-      end
-    }
+      # if winner_id is -1 no one won
+      player_nets[winner_id][:wins] += 1 if winner_id >= 0
+    end
 
     # Thread Run
 
