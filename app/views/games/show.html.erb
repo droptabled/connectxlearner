@@ -16,20 +16,7 @@
       </table>
     </div>
 
-    <div class="col-md-4">
-      <p>
-        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#playCollapse" aria-expanded="false" aria-controls="playCollapse">
-          Play
-        </button>
-      </p>
-      <div class="collapse" id="playCollapse">
-        <div>
-          Play controller here?
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-2">
+    <div class="col-md-6">
       <div class="container">
         <div class="row">
           <h4>Bot Players</h4>
@@ -37,12 +24,16 @@
         
           <% @bots.each do |bot| %>
             <div class="row">
-              <p><%= bot.name %> | <%= link_to("Show", edit_game_bot_path(@game, bot)) %>
+              <p>
+                <%= "#{bot.name} Iteration: #{bot.evolution_count}" %>
+                | <%= link_to("Show", edit_game_bot_path(@game, bot)) %>
+                | <%= link_to("Play", play_path(bot)) %>
+              </p>
             </div>
           <% end %>
-        <div class="row">
+        <!--<div class="row">
           <%= link_to("New Bot", new_game_bot_path(@game))%>
-        </div>
+        </div>-->
       </div>
     </div>
 

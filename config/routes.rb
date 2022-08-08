@@ -3,7 +3,7 @@ Rails.application.routes.draw do
     resources :bots
   end
 
-  resources :play, only: :index
+  resources :play, only: :show
 
   root controller: :games, action: :index
 end
