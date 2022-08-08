@@ -7,80 +7,56 @@ require 'benchmark'
 # bot:                bot
 # iterations:         int
 # gamesPerIteration:  int
-# NetEvolver.new(bot: Bot.last, iterations: 50).call
+# NetEvolver.new(bot: Bot.last, iterations: 50, survivor_count: 5, offspring_multiplier: 5).call
 class NetEvolver
-  def initialize(bot:, iterations:)
+  def initialize(bot:, iterations:, survivor_count:, offspring_multiplier:)
     @bot = bot
-    @base_net = NeuralNet.new(bot: bot)
+    @base_net = NeuralNet.new(parent: bot)
     @iterations = iterations
+    @survivor_count = survivor_count
+    @offspring_multiplier = offspring_multiplier
+    @survivor_nets = [base_net] + get_mutated_nets(base_net, survivor_count - 1)
   end
 
-  # Create N slightly randomized versions of the original bot
+  # Create survivor_count * offspring_multiplier slightly randomized versions of the original bot
   # Play games against each other (and the original) round robin
-  # promote the best performer to the next version
-
+  # promote the best survivor_count amount of survivors to the next version
   def call
-    n = 0.0
-    @iterations.times do
-      @base_net = evolve
-      n += 1
-      printf("\rProgress: %f", n / @iterations * 100) if n % (iterations/100) == 0
+    iterations.times do |n|
+      @survivor_nets = evolve
+      printf("\rProgress: %f", n / iterations.to_f * 100)
     end
 
-    @base_net.save_evolved_net
+    @survivor_nets.map(&:save_evolved_net)
   end
 
   private
 
-  attr_reader :base_net
+  attr_reader :iterations, :base_net, :survivor_count, :offspring_multiplier
+  attr_accessor :survivor_nets
 
-  def evolve
-    all_nets = [base_net] + get_mutated_nets(4)
-    all_nets.map!.with_index { |net, id| { id: id, wins: 0, net: net } }
-
-    # Regular Run
-
-    all_nets.combination(2) do |player_nets|
-      game = BotGameEvaluator.new(player_nets: player_nets.pluck(:net))
+  def round_robin(nets)
+    nets_and_wins = nets.map.with_index { |net, id| { id: id, wins: 0, net: net } }
+    nets_and_wins.combination(2) do |faceoff_player_nets|
+      game = BotGameEvaluator.new(player_nets: faceoff_player_nets.pluck(:net))
       winner_id = game.play
 
       # if winner_id is -1 no one won
-      player_nets[winner_id][:wins] += 1 if winner_id >= 0
+      faceoff_player_nets[winner_id][:wins] += 1 if winner_id >= 0
     end
-
-    # Thread Run
-
-    # puts Benchmark.measure {
-    #   threads = []
-    #   all_nets.combination(2) do |player_nets|
-    #     threads << Thread.new do
-    #       winner = BotGameEvaluator.new(player_nets: player_nets.pluck(:net)).play
-    #       if winner >= 0
-    #         player_nets[winner][:id]
-    #       else
-    #         -1
-    #       end
-    #     end
-    #   end
-
-    #   threads.map do |t|
-    #     t.join
-    #     winner = t.value
-    #     all_nets[winner][:wins] += 1 if winner >= 0
-    #   end
-    # }
-
-    # Process Fork run
-
-    # puts Benchmark.measure {
-      
-    # }
-
-    # return the bot with the max amount of wins
-    all_nets.max { |h| h[:wins] }[:net]
+    nets_and_wins.sort_by { |x| x[:wins] }.reverse
   end
 
-  def get_mutated_nets(num_children)
-    num_children.times.map { NeuralNet.new(bot: base_net, mutation_weight: 1.0) }
+  def evolve
+    all_nets = @survivor_nets.map { |base| [base] + get_mutated_nets(base, offspring_multiplier - 1) }.flatten
+
+    results = round_robin(all_nets)
+    results = results.sort_by { |x| x[:wins] }.reverse
+
+    results[0..(survivor_count - 1)].map { |x| x[:net] }
+  end
+
+  def get_mutated_nets(net, num_children)
+    num_children.times.map { NeuralNet.new(parent: net, mutation_weight: 1.0) }
   end
 end
