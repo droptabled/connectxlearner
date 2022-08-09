@@ -2,30 +2,41 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 class Cell extends React.Component {
-
+  render() {
+    return(
+      <button className="cell" onClick={props.onClick}>
+        {props.value}
+      </button>
+    )
+  }
 }
 
 class Board extends React.Component {
-
-}
-
-class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      squares: Array(9).fill(null),
-      playerIsNext: true
+      cells: Array.from(Array(props.rows), () => new Array(props.cols).fill(null)),
+      playerIsNext: true,
     };
   }
 
+
+  render() {
+    <div>
+      <div className="status">TODO: Add status</div>
+      {this.state.cells.map((row, i) =>
+        <div className="cell-row" key={i}></div>
+      )}
+    </div>
+  }
+}
+
+class Game extends React.Component {
   render() {
     return(
       <div>
-        Playing against Bot
-        <div>
-          { this.state.playerIsNext ? "Your Turn" : "Bot Thinking..." }
-        </div>
-        <Board />
+        <div>Title</div>
+        <Board rows={7} cols={8} />
       </div>
     )
   }
