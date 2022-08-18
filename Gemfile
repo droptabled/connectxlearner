@@ -27,6 +27,8 @@ gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 # NMatrix for fast matrix/vector multiplication
 gem 'nmatrix', '~> 0.2.1'
+# react rails UJS
+gem 'react-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

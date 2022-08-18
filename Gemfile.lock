@@ -60,6 +60,10 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
+    babel-source (5.8.35)
+    babel-transpiler (0.7.0)
+      babel-source (>= 4.0, < 6)
+      execjs (~> 2.0)
     backports (3.23.0)
     bindex (0.8.1)
     bootsnap (1.9.4)
@@ -75,6 +79,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.9)
+    connection_pool (2.2.5)
     crass (1.0.6)
     diff-lcs (1.5.0)
     duktape (2.6.0.0)
@@ -149,6 +154,12 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
+    react-rails (2.6.2)
+      babel-transpiler (>= 0.7.0)
+      connection_pool
+      execjs
+      railties (>= 3.2)
+      tilt
     rspec-core (3.11.0)
       rspec-support (~> 3.11.0)
     rspec-expectations (3.11.0)
@@ -224,6 +235,7 @@ DEPENDENCIES
   pry-byebug
   puma (~> 3.11)
   rails (~> 6.1)
+  react-rails
   rspec-rails (= 6.0.0.rc1)
   sass-rails (~> 5.0)
   turbolinks (~> 5)
