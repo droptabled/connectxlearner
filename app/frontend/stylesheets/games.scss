@@ -1,7 +1,7 @@
 $player1: #FEFF35;
 $player2: #F14750;
 
-table.game 
+table.game
 {
     border-collapse: collapse;
     table-layout: fixed;
@@ -11,9 +11,11 @@ table.game
 
 .cell{
     text-align: center;
+    border: 3px solid #0069A8;
+    width: 10%;
+    height: 10%;
 }
 
-.border-cell{
+.cell-null{
     @extend .cell;
-    border: 3px solid #0069A8; 
 }

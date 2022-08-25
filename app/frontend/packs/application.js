@@ -1,4 +1,5 @@
 import 'bootstrap'
+require('stylesheets/application')
 require("@rails/ujs").start()
 require("@rails/activestorage").start()
 window.jQuery = require("jquery")

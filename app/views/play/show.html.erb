@@ -1,8 +1,9 @@
-<%= javascript_pack_tag "games" %>
-<%= stylesheet_pack_tag "games" %>
+<%= stylesheet_pack_tag "play" %>
+
 <p id="notice"><%= notice %></p>
 
 <div class="container">
   <div id="root"></div>
+  <%= react_component("Game", { rows: @game.height, cols: @game.width, neuralNet: []}) %>
 </div>
 
