@@ -51,7 +51,7 @@ export default class Game extends React.Component {
   render() {
     return (
       <div className="game">
-          <Board rows={8} cols={7}/>
+          <Board rows={this.props.rows} cols={this.props.cols}/>
         <div className="game-info">
           <div>{/* status */}</div>
           <ol>{/* TODO */}</ol>
@@ -64,5 +64,4 @@ export default class Game extends React.Component {
 Game.propTypes = {
   rows: PropTypes.number,
   cols: PropTypes.number,
-  neuralNet: PropTypes.array
 }
