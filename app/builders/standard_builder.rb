@@ -26,7 +26,7 @@ class StandardBuilder
 
     TransferLayer.create!(
       bot: bot,
-      layer_matrix: Array.new(last_layer.col_count * count, 0.0),
+      layer_matrix: Array.new(last_layer.col_count) { Array.new(count, 0.0) },
       depth: last_layer.depth + 1,
       row_count: last_layer.col_count,
       col_count: count
@@ -36,7 +36,7 @@ class StandardBuilder
   def generate_input_layer(count)
     TransferLayer.create!(
       bot: bot,
-      layer_matrix: Array.new(bot.game.height * bot.game.width * count, 0.0),
+      layer_matrix: Array.new(bot.game.height * bot.game.width) { Array.new(count, 0.0) },
       depth: 0,
       row_count: bot.game.height * bot.game.width,
       col_count: count

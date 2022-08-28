@@ -15,7 +15,7 @@ class NeuralNet
       @bot = parent
       @matrix_transfer_layers = parent.transfer_layers.order(:depth).to_a.map! do |layer|
         {
-          weight_array: NMatrix.new([layer.row_count, layer.col_count], layer.layer_matrix),
+          weight_array: N[*layer.layer_matrix],
           layer: layer
         }
       end
@@ -41,7 +41,9 @@ class NeuralNet
   def mutate(max_weight)
     @mutation_count += 1
     matrix_transfer_layers.each do |transfer_layer|
-      transfer_layer[:weight_array].map! { |x| (x + rand(-max_weight..max_weight)).clamp(-100.0, 100.0) }
+      transfer_layer[:weight_array].map! do |x|
+        (x + rand(-max_weight..max_weight)).clamp(-100.0, 100.0)
+      end
     end
   end
 
@@ -54,7 +56,7 @@ class NeuralNet
     matrix_transfer_layers.each do |layer|
       new_layer = layer[:layer].dup
       new_layer.bot = evolved_bot
-      new_layer.layer_matrix = layer[:weight_array].to_flat_a
+      new_layer.layer_matrix = layer[:weight_array].to_a
       new_layer.save!
     end
   end

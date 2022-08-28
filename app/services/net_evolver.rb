@@ -22,9 +22,10 @@ class NetEvolver
   # Play games against each other (and the original) round robin
   # promote the best survivor_count amount of survivors to the next version
   def call
+    update_interval = (iterations / 1000.0).ceil
     iterations.times do |n|
       @survivor_nets = evolve
-      printf("\rProgress: %f", n / iterations.to_f * 100)
+      printf("\rProgress: %f", n / iterations.to_f * 100) if n % update_interval == 0
     end
 
     @survivor_nets.map(&:save_evolved_net)
