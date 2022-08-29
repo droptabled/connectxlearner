@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import 'channels'
+import BotPlayChannel from '../channels/bot_play_channel'
 
 function Cell(props) {
   return(
@@ -64,4 +66,5 @@ export default class Game extends React.Component {
 Game.propTypes = {
   rows: PropTypes.number,
   cols: PropTypes.number,
+  bot_id: PropTypes.number
 }

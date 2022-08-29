@@ -6,6 +6,9 @@ class PlayController < ApplicationController
   def show
   end
 
+  def start
+  end
+
   private
 
   def set_game_and_bot
